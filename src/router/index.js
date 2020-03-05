@@ -15,6 +15,11 @@ const routes = [
     path: '/register',
     name: 'Create',
     component: Create
+  },
+  {
+    path: '/edit/:id',
+    name: 'Edit',
+    component: Create
   }
 ]
 

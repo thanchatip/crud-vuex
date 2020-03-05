@@ -25,27 +25,48 @@
 import { mapActions } from 'vuex'
 export default {
   name: 'Create',
+  async mounted () {
+    this.userID = this.$route.params.id
+    if (this.userID !== undefined) {
+      this.user = await this.getUserDetail(this.userID)
+      console.log(this.user)
+    }
+  },
   data () {
     return {
       user: {
+        id: '',
         firstName: '',
         lastName: '',
         userName: '',
         group: ''
-      }
+      },
+      userID: undefined
     }
   },
   methods: {
     ...mapActions({
-      addUser: 'addUser'
+      addUser: 'addUser',
+      getUserDetail: 'getUserDetail',
+      updateUser: 'updateUser'
     }),
     async register (user) {
-      console.log(user)
-      const result = await this.addUser(user)
-      console.log('result =' + result)
-      if (result === 'saved') {
-        console.log('At vue : User Added')
-        this.$router.push({ name: 'Home' })
+      if (this.userID !== undefined) {
+        console.log('update')
+        user.id = this.userID
+        const updateResult = await this.updateUser(user)
+        if (updateResult === 'updated') {
+          console.log('At vue : User updated')
+          this.$router.push({ name: 'Home' })
+        }
+      } else {
+        console.log(user)
+        const result = await this.addUser(user)
+        console.log('result =' + result)
+        if (result === 'saved') {
+          console.log('At vue : User Added')
+          this.$router.push({ name: 'Home' })
+        }
       }
     }
   }

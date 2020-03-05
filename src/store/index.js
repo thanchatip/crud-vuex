@@ -11,14 +11,14 @@ export default new Vuex.Store({
   mutations: {
   },
   actions: {
-    async addUser ({ commit }, payload) {
+    async addUser ({ commit }, user) {
       try {
         console.log('saving...')
         await db.collection('users').add({
-          first: payload.firstName,
-          last: payload.lastName,
-          userName: payload.userName,
-          group: payload.group
+          firstName: user.firstName,
+          lastName: user.lastName,
+          userName: user.userName,
+          group: user.group
         })
         console.log('saved')
         return 'saved'
@@ -33,8 +33,8 @@ export default new Vuex.Store({
         querySnapshot.forEach(function (doc) {
           const user = {
             id: doc.id,
-            first: doc.data().first,
-            last: doc.data().last,
+            firstName: doc.data().firstName,
+            lastName: doc.data().lastName,
             userName: doc.data().userName,
             group: doc.data().group
           }
@@ -58,7 +58,27 @@ export default new Vuex.Store({
       }
     },
     async getUserDetail ({ commit }, userID) {
-
+      const doc = await db.collection('users').doc(userID).get()
+      if (doc.exists) {
+        console.log(doc.data())
+        return doc.data()
+      }
+    },
+    async updateUser ({ commit }, user) {
+      try {
+        console.log(user.id)
+        await db.collection('users').doc(user.id).set({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          userName: user.userName,
+          group: user.group
+        })
+        console.log('updated')
+        return 'updated'
+      } catch {
+        console.log('update failed')
+        return 'error'
+      }
     }
   },
   modules: {
