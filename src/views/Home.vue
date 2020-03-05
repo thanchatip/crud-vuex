@@ -1,18 +1,50 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="card mb-2" v-for="user in users" v-bind:key="user.id">
+        <div class="card-body">
+        <h4 class="card-title">User : {{ user.userName }}</h4>
+        <p class="card-text">Name :{{user.first}}  {{user.last}}</p>
+         <p class="card-text">Group :{{user.group}}</p>
+        </div>
+         <div class="row">
+          <div class="col-auto mr-auto">
+            <button class="btn btn-primary"> Edit </button>
+                &nbsp;
+              <button  class="btn btn-danger" @click="del(user.id)" >Delete</button>&nbsp;<br>
+          </div>
+          <br>
+         </div>
+         <br>
+      </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Home',
-  components: {
-    HelloWorld
+  data () {
+    return {
+      users: []
+
+    }
+  },
+  async mounted () {
+    this.users = await this.loadUsers()
+  },
+  methods: {
+    ...mapActions({
+      loadUsers: 'loadUsers',
+      removeUser: 'removeUser'
+    }),
+    async del (userID) {
+      const delResult = await this.removeUser(userID)
+      if (delResult === 'deleted') {
+        console.log('deleted at vue')
+        this.users = await this.loadUsers()
+      }
+    }
   }
 }
 </script>
